@@ -6,7 +6,8 @@
   |Script Name|Description|
   |:---------:|:----------|
   |[cryptography](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/cryptography.sh)|Helps to install cryptography python package|
-  |[ubuntu](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/linux_distros/ubuntu.sh)|Installs Ubuntu on Android using Termux without root|
+  |<details><summary>[Install Linux Distros](https://github.com/dmdhrumilmistry/TermuxScripts/tree/main/Installation/linux_distros)</summary><br>[Ubuntu](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/linux_distros/ubuntu.sh)</details>|Installation Scripts to install linux distros in Termux without Root|
+  
 
 ## Usage
 - replace [script_link] with desired script link and execute below command in termux
