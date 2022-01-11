@@ -5,7 +5,8 @@
 - Installation Scripts
   |Script Name|Description|
   |:---------:|:----------|
-  |cryptography|Helps to install cryptography python package|
+  |[cryptography](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/cryptography.sh)|Helps to install cryptography python package|
+  |[ubuntu](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/linux_distros/ubuntu.sh)|Installs Ubuntu on Android using Termux without root|
 
 ## Usage
 - replace [script_link] with desired script link and execute below command in termux
