@@ -1,5 +1,16 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+banner() {
+	echo -e "\033[1m"
+	echo -e "+---------------------+"
+	echo -e "| Linux Installer     |"
+	echo -e "+=====================+"
+	echo -e "| script by           |"
+	echo -e "|      dmdhrumilmistry|"
+	echo -e "+=====================+"
+	echo -e "\033[0m"
+}
+
 check_raise_exception() {
 	local arg=$1
 	local err_message=$2
@@ -103,7 +114,7 @@ install_distro(){
 
 
 # Start script
-echo -e "\033[1m[*] Script started\033[0m"
+banner
 
 get_distro_name
 is_distro_valid=$?
