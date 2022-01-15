@@ -51,6 +51,38 @@ CROSS="\u274c"
 # =========================================
 
 ###########################################
+# prints banner on the screen
+banner(){
+    clear
+    echo -e "${CYAN}"
+    echo -e "████████╗ ██████╗ ██████╗"                        
+    echo -e "╚══██╔══╝██╔═══██╗██╔══██╗"                       
+    echo -e "   ██║   ██║   ██║██████╔╝"                       
+    echo -e "   ██║   ██║   ██║██╔══██╗"                       
+    echo -e "   ██║   ╚██████╔╝██║  ██║"                       
+    echo -e "   ╚═╝    ╚═════╝ ╚═╝  ╚═╝"                                                                                          
+    echo -e "${NORMAL}${PURPLE}"                                               
+    echo -e "██╗    ██╗███████╗██████╗"                        
+    echo -e "██║    ██║██╔════╝██╔══██╗"                       
+    echo -e "██║ █╗ ██║█████╗  ██████╔╝"                       
+    echo -e "██║███╗██║██╔══╝  ██╔══██╗"                       
+    echo -e "╚███╔███╔╝███████╗██████╔╝"                       
+    echo -e " ╚══╝╚══╝ ╚══════╝╚═════╝"                        
+    echo                                                  
+    echo -e "███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗" 
+    echo -e "██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗"
+    echo -e "███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝"
+    echo -e "╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗"
+    echo -e "███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║"
+    echo -e "╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝"
+    echo -e "${NORMAL}"
+    echo -e "================================================"
+    echo -e "Script by ${GREEN}dmdhrumilmistry${NORMAL}"
+    echo -e "================================================\n\n"
+
+}
+
+###########################################
 # prints info message
 print_info(){
     local message=$1
@@ -83,7 +115,7 @@ print_success(){
 ###########################################
 # to install requirements
 install_reqs(){
-    local packages=("wget" "nano" "tor" "apache2")
+    local packages=("tor" "apache2")
     for package in "${packages[@]}"; do 
         print_info "Installing $package package."
         apt install $package -y
@@ -103,16 +135,24 @@ conf_tor(){
     local tor_dir="${PREFIX}/var/lib/tor/hidden_service"
     local tor_file="${tor_dir}/torrc"
     local hostname_file="${tor_dir}/hostname"
-    local tor_log_file="${tor_dir}/tor_website_logs.out"
+    local tor_log_file="${tor_dir}/tor_script_logs.out"
     
-    local hidden_service_port="9999"
+    local hidden_service_port="80"
     local server_conf="127.0.0.1:8080"
     local tor_proxy="127.0.0.1:9050"
 
-    # create hidden service folder if not present
-    if [ ! -f "$tor_dir" ]; then 
-        mkdir -p $tor_dir
+    # kill already running tor service
+    pkill -9 tor
+
+    # delete tor_dir folder if present
+    if [ -d "$tor_dir" ]; then 
+        print_info "Deleting $tor_dir"
+        rm -rf $tor_dir
     fi
+    # create new tor_dir folder
+    print_info "Creating $tor_dir"
+    mkdir -p $tor_dir
+
     # delete torrc file if already exists
     if [ -f "$tor_file" ]; then
         print_info "torrc file found at $tor_file, this file will be deleted."
@@ -126,7 +166,7 @@ conf_tor(){
     print_success "torrc file created successfully."
 
     print_info "Starting TOR...."
-    tor -f $tor_file > $tor_log_file &
+    tor > $tor_log_file &
 
     print_info "Waiting 10 seconds for hostname to be generated...."
     sleep 10
@@ -143,9 +183,12 @@ conf_tor(){
 ###########################################
 # configure and start apache2 service
 conf_apache2(){
-    local html_content="<html><body><p>This Website was hosted using a script by <h2><b><a href='https://github.com/dmdhrumilmistry/'>dmdhrumilmistry</a?</b></p></h2></body></html>"
+    local html_content="<html><body><p>This Website was hosted using the script written by <h2><b><a href='https://github.com/dmdhrumilmistry/'>dmdhrumilmistry</a?</b></p></h2></body></html>"
     local index_path="${PREFIX}/share/apache2/default-site/htdocs/index.html"
     
+    # stop httpd if already running
+    pkill -9 httpd
+
     # overwrite index file
     print_info "Creating index file at $index_path"
     echo $html_content > $index_path
@@ -170,13 +213,16 @@ conf_apache2(){
 # exit script if any error occurs
 # set -e
 
+# print banner
+banner
+
 # install requirements
 print_info "Installing Requirements...."
 install_reqs
 
 # configure server
 print_info "Configuring Server...."
-# conf_apache2
+conf_apache2
 
 # configure tor
 print_info "Configuring TOR...."
