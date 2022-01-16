@@ -37,13 +37,23 @@ BG_LIGHT_GRAY="\e[47m"
 # ========= end of ANSI variables =========
 
 
-
 ###########################################
 # Unicode variables
 # =========================================
 TICK="\u2713"
 CROSS="\u274c"
 # ======== end of Unicode variables =======
+
+
+###########################################
+# Global variables
+# =========================================
+
+###########################################
+# TOR conf files
+tor_dir="${PREFIX}/var/lib/tor/hidden_service"
+tor_file="${tor_dir}/torrc"
+# ======== end of Global variables ========
 
 
 ###########################################
@@ -132,8 +142,6 @@ install_reqs(){
 ###########################################
 # configure tor service
 conf_tor(){
-    local tor_dir="${PREFIX}/var/lib/tor/hidden_service"
-    local tor_file="${tor_dir}/torrc"
     local hostname_file="${tor_dir}/hostname"
     local tor_log_file="${tor_dir}/tor_script_logs.out"
     
@@ -165,7 +173,7 @@ conf_tor(){
     echo "HiddenServicePort ${hidden_service_port} ${server_conf}" >> $tor_file  
     print_success "torrc file created successfully."
 
-    print_info "Starting TOR...."
+    print_info "Starting TOR to get hostname...."
     tor > $tor_log_file &
 
     print_info "Waiting 10 seconds for hostname to be generated...."
@@ -193,16 +201,58 @@ conf_apache2(){
     print_info "Creating index file at $index_path"
     echo $html_content > $index_path
     
-    # start server
-    apachectl -k start
-    local status=$?
-    if [ $status != 0 ]; then
-        print_err "Failed to start Web Server"
+    # start server during installation for verification
+    # apachectl -k start
+    # local status=$?
+    # if [ $status != 0 ]; then
+        # print_err "Failed to start Web Server"
+        # exit 1
+    # else
+        # print_success "Web Server started successfully"
+        # print_info "${NORMAL}Use ${BOLD}${YELLOW}apachectl -k stop${NORMAL} to stop the web server."
+    # fi
+}
+
+###########################################
+# configure and create aliases
+conf_aliases(){
+    local alias_file="${HOME}/.tor_webserver_aliases"
+    local shell_file=""
+
+    # find user shell and set shellrc file to shell_file
+    case $(echo $SHELL) in
+    *"/zsh"*)
+        shell_file="${HOME}/.zshrc"
+    ;;
+    *"/bash"*)
+        shell_file="${HOME}/.bashrc"
+    ;;
+    *)
+        print_info "Cannot find bash/zsh conf file, add ${alias_file} to your shell rc file manually."
         exit 1
+    ;;
+    esac
+    if [[ -f "$shell_file" ]]; then
+        print_info "$shell_file found, updating file with new aliases."
     else
-        print_success "Web Server started successfully"
-        print_info "${NORMAL}Use ${BOLD}${YELLOW}apachectl -k stop${NORMAL} to stop the web server."
+        print_info "$shell_file not found."
     fi
+
+    # forefully remove alias file and create n
+    rm -rf $alias_file
+
+    # commands for tor service
+    echo "alias tor-web-start=\"tor -f ${tor_file} & ;apachectl -k start\"" >> $alias_file
+    echo "alias tor-web-stop=\"pkill -9 tor;pkill -9 httpd\"" >> $alias_file
+
+    # add alias source command to shell rc file
+    echo "source $alias_file" >> $shell_file
+
+    # print details to user
+    print_success "Restart Termux before using below commands"
+    echo -e "${BOLD}${YELLOW}tor-web-start${NORMAL}\tto start tor and web server"
+    echo -e "${BOLD}${YELLOW}tor-web-stop${NORMAL}\tto stop tor and web server"
+    echo 
 }
 # ======== end of functions ==============
 
@@ -227,4 +277,9 @@ conf_apache2
 # configure tor
 print_info "Configuring TOR...."
 conf_tor
+
+# configure aliases
+conf_aliases
+
+exit 0
 # =========== end of start script ============
