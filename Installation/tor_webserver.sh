@@ -178,6 +178,7 @@ conf_tor(){
 
     print_info "Waiting 10 seconds for hostname to be generated...."
     sleep 10
+    pkill -9 tor
 
     print_info "Getting TOR website hostname..."
     if [ ! -f "$hostname_file" ]; then
