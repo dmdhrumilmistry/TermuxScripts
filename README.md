@@ -16,10 +16,18 @@
   ```bash
   curl -L -o "downloaded_script.sh" "[script_link]?raw=True" && bash downloaded_script.sh
   ```
-  
-- Example to install `cryptography python package` use
+  OR
+  ```
+  bash -c "$(curl -fsSL [script_link]?raw=True)"
+  ```
+- Examples:
+  - To install `cryptography python package` use
   ```bash
   curl -L -o "downloaded_script.sh" "https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/cryptography.sh?raw=True" && bash downloaded_script.sh
+  ```
+- To install `Ngrok` use
+  ```bash
+  bash -c "$(curl -fsSL https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/ngrok_installation.sh?raw=True)"
   ```
  
 ## License
