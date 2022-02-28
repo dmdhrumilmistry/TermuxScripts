@@ -168,7 +168,7 @@ install_reqs(){
 ###########################################
 # Download files from internet using wget
 download_files(){
-    local files=("https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/beef-installer/Installation/Beef/files/Gemfile" "https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/beef-installer/Installation/Beef/files/config.yaml")
+    local files=("https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/main/Installation/Beef/files/Gemfile" "https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/main/Installation/Beef/files/config.yaml")
 
     for file in "${files[@]}"; do
         wget $file >> $log_file 2>>$log_file
