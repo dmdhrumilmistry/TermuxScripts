@@ -54,6 +54,12 @@ CROSS="\u274c"
 curr_dir="$(eval pwd)"
 beef_dir="${PREFIX}/opt/beef"
 log_file=".beef-installer-logs"
+repo_link="https://github.com/beefproject/beef.git"
+
+###########################################
+# beef authentication
+beefuser="beefroot"
+beefpasswd="toor"
 
 # ======== end of Global variables ========
 
@@ -86,6 +92,25 @@ banner(){
     echo -e "Script by ${GREEN}dmdhrumilmistry${NORMAL}"
     echo -e "================================================\n\n"
 }
+
+
+###########################################
+# checks for return value and prints 
+# message according
+check_result(){
+    local msg_succ=$1
+    local msg_err=$2
+    local status=$3
+
+    if [ $status != 0 ]; then
+        print_err "$msg_err"
+        exit 1
+    else
+        print_success "$msg_succ"
+    fi
+    
+}
+
 
 ###########################################
 # prints info message
@@ -135,14 +160,19 @@ install_reqs(){
         apt install $package -y >> $log_file 2>>$log_file
         echo -e "\n" >> $log_file
 
+        check_result "$package installed successfully." "$package installation failed! Exiting." $?
+    done
+}
 
-        local status=$?
-        if [ $status != 0 ]; then
-            print_err "$package installation failed! Exiting."
-            exit 1
-        else
-            print_success "$package installed successfully."
-        fi
+
+###########################################
+# Download files from internet using wget
+download_files(){
+    local files=("https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/beef-installer/Installation/Beef/files/Gemfile" "https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/beef-installer/Installation/Beef/files/config.yaml")
+
+    for file in "${files[@]}"; do
+        wget $file >> $log_file 2>>$log_file
+        check_result "${file} downloaded successfully" "Failed to download file ${https://raw.githubusercontent.com/dmdhrumilmistry/TermuxScripts/beef-installer/Installation/Beef/files/Gemfile}" $?
     done
 }
 
@@ -150,28 +180,19 @@ install_reqs(){
 ###########################################
 # clone Beef Repo
 clone_repo(){
-    local repo_link="https://github.com/beefproject/beef.git"
-    local dest_dir="${PREFIX}/opt/beef"
 
-    if [ -d "${dest_dir}" ]; then
-        print_info "${dest_dir} found. Deleting and creating new directory"
-        rm -rf $dest_dir
+    if [ -d "${beef_dir}" ]; then
+        print_info "${beef_dir} found. Deleting and creating new directory"
+        rm -rf $beef_dir
     fi
 
-    print_info "Creating new ${dest_dir} directory"
-    mkdir -p $dest_dir
+    print_info "Creating new ${beef_dir} directory"
+    mkdir -p $beef_dir
 
-    print_info "Cloning beef project"
-    git clone $repo_link $dest_dir --depth=1 >> $log_file
+    print_info "Cloning beef project" "Falied to clone Beef! Exiting." $?
+    git clone $repo_link $beef_dir --depth=1 >> $log_file 2>>$log_file
 
-    local status=$?
-    if [ $status != 0 ]; then
-        print_err "Falied to clone Beef! Exiting."
-        exit 1
-    else
-        print_success "Beef Cloned successfully."
-    fi
-
+    check_result "Beef Cloned successfully." "Beef Cloned successfully." $?
 }
 
 
@@ -179,47 +200,43 @@ clone_repo(){
 ###########################################
 # installs ruby gems
 install_gems(){
-    # install required gems for installation
+    cd $beef_dir
+
     print_info "Installing Required Gems"
-    rm "Gemfile"
-    # TODO: download gemfile and install/update gems
     gem install bundler
     gem install nokogiri -- --use-system-libraries --with-xml2-config=/data/data/com.termux/files/usr/bin/xml2-config --with-xml2-include=/data/data/com.termux/files/usr/include/libxml2
 
-    local status=$?
-    if [ $status != 0 ]; then
-        print_err "Falied to clone Beef! Exiting."
-        exit 1
-    else
-        print_success "Beef Cloned successfully."
-    fi
+    check_result "Required Gems installed successfully." "Failed to install required gems." $?
     
-    # install beef gems
+    print_info "Removing and Downloading Gemfile & config.yaml files"
+    rm -f Gemfile
+    rm -f config.yaml
+    download_files
+
+
     if [ -f  "${beef_dir}/Gemfile" ]; then
         print_info "Beef Gemfile found. installing gems..."
-        cd $beef_dir
-        
+    
         # try `bundle install` if bundler install fails 
         bundler install
-        local status=$?
-        if [ $status != 0 ]; then
-            print_err "Falied to install gems! Exiting."
-            exit 1
-        fi
+        check_result "Beef Gems installed successfully" "Falied to install gems! Exiting." $?
         cd $curr_dir
     else
-        print_err "Gemfile is missing..."
+        print_err "Gemfile is missing. Cannot proceed further. Exiting!!"
         exit 1
     fi
-
-    print_success "Gems installed Successfully."
 }
 
 
 ###########################################
 # configure and install beef
 install_beef(){
-    
+    install_gems
+
+    print_info "${beef_dir} contains beef executable"
+    print_info "default username : ${beefuser}"
+    print_info "default passwd : ${beefpasswd}"
+
 }
 
 # ======== end of functions ==============
@@ -243,8 +260,8 @@ print_info "Downloading Beef...."
 clone_repo
 
 echo -e "\n"
-print_info "Installing Beef Gems"
-install_gems
+print_info "Installing Beef..."
+install_beef
 
 exit 0
 # =========== end of start script ============
