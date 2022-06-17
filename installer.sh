@@ -154,6 +154,12 @@ start() {
         print_success "Cloned successfully in ${HOME}"
     fi
 
+    # add execution permission for python script
+    chmod +x ${HOME}/${folder_name}/termux-scripts.py
+
+    # install python requirements
+    python -m pip install -r ${HOME}/${folder_name}/requirements.txt
+    
     # print info
     print_info "Run termux-script.py file using:"
     print_info "python termux-script.py"

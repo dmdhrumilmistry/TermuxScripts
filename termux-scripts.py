@@ -136,7 +136,7 @@ def start():
 
                 case 'clear':
                     cmd = 'cls' if name == 'nt' else 'clear'
-                    call(cmd, shell=True)
+                    execute_cmd(cmd)
 
                 case 'exit':
                     exit(0)
@@ -151,7 +151,7 @@ def start():
                         print("[!] Cannot move out of the Project folder")
 
                 case 'select':
-                    if cmd_len >= 2 :
+                    if cmd_len >= 2:
                         dirname = command[1]
                         new_dir = join(getcwd(), dirname)
 
@@ -159,11 +159,12 @@ def start():
                         if isdir(new_dir) and ROOT_DIR in new_dir:
                             chdir(new_dir)
                         else:
-                            print("[!] Directory does not exists/Cannot Move out of Project Folder")
+                            print(
+                                "[!] Directory does not exists/Cannot Move out of Project Folder")
                     else:
                         print(
                             "[!] Directory name is required. example: select directory_name")
-                
+
                 case 'run':
                     if cmd_len >= 2:
                         sh_file_name = command[1]
@@ -171,7 +172,7 @@ def start():
 
                         if isfile(file_path) and ROOT_DIR in file_path:
                             print(f"[*] Starting {sh_file_name}")
-                            call(['bash', file_path], shell=True)
+                            execute_cmd(f"bash {file_path}")
                         else:
                             print("[!] Invalid File Path")
 
