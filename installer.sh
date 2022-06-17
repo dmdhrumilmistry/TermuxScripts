@@ -3,6 +3,7 @@
 ############################################
 # ANSI variables
 # ==========================================
+
 ############################################
 # ANSI styles
 NORMAL="\e[0m"
@@ -10,7 +11,6 @@ BOLD="\e[1m"
 FAINT="\e[2m"
 ITALIC="\e[3m"
 UNDERLINE="\e[4m"
-
 ############################################
 # ANSI Foregroud Colors
 BLACK="\e[30m"
@@ -21,7 +21,6 @@ BLUE="\e[34m"
 PURPLE="\e[35m"
 CYAN="\e[36m"
 LIGHT_GRAY="\e[37m"
-
 ############################################
 # ANSI Background Colors
 BG_BLACK="\e[40m"
@@ -49,28 +48,12 @@ CROSS="\u274c"
 
 ###########################################
 # Functions
-# =========================================
+###########################################
 
 ###########################################
 # prints banner on the screen
 banner() {
-    clear
     echo -e "${CYAN}"
-
-    echo -e " ██████╗  ██████╗  ██████╗  ██████╗ ██╗     ███████╗"
-    echo -e "██╔════╝ ██╔═══██╗██╔═══██╗██╔════╝ ██║     ██╔════╝"
-    echo -e "██║  ███╗██║   ██║██║   ██║██║  ███╗██║     █████╗"
-    echo -e "██║   ██║██║   ██║██║   ██║██║   ██║██║     ██╔══╝"
-    echo -e "╚██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝███████╗███████╗"
-    echo -e " ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝ ╚══════╝╚══════╝"
-    echo -e "${NORMAL}${PURPLE}"
-    echo -e "██████╗ ██╗  ██╗██╗███████╗██╗  ██╗"
-    echo -e "██╔══██╗██║  ██║██║██╔════╝██║  ██║"
-    echo -e "██████╔╝███████║██║███████╗███████║"
-    echo -e "██╔═══╝ ██╔══██║██║╚════██║██╔══██║"
-    echo -e "██║     ██║  ██║██║███████║██║  ██║"
-    echo -e "╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝"
-    echo -e "${NORMAL}"
     echo -e "██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     ███████╗██████╗"
     echo -e "██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     ██╔════╝██╔══██╗"
     echo -e "██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     █████╗  ██████╔╝"
@@ -111,16 +94,14 @@ print_success() {
 }
 
 ###########################################
-# check previous function return value
-# and take appropriate action
-check_result() {
-    local failed_msg=$1
-    local success_msg=$2
-    local return_status=$?
-    if [ $return_status != 0 ]; then
-        print_err "$failed_msg"
+# updates and upgrades packages
+update_and_upgrade() {
+    apt update -y && apt upgrade -y
+    if [ $status != 0 ]; then
+        print_err "Packages Upgrade failed! Exiting."
+        exit 1
     else
-        print_success "$success_msg"
+        print_success "Packages Upgraded successfully."
     fi
 }
 
@@ -142,50 +123,47 @@ install_reqs() {
 }
 
 ###########################################
-# main function
-start_script() {
+# starts main script
+start() {
+    local repo_link="https://github.com/dmdhrumilmistry/TermuxScripts.git"
+    local folder_name="TermuxScripts"
 
+    # print banner
     banner
 
-    print_info "Initializing Script"
+    # Upgrade packages
+    # print_info "Upgrading Packages"
+    # update_and_upgrade
+
+    # install requirements
+    print_info "Installing requirements"
     install_reqs
 
-    print_info "Cloning Repo in Home Directory"
+    # remove directory if already exists
+    rm -rf $folder_name
+
+    # install project
     cd $HOME
-    local repo_link="https://github.com/dmdhrumilmistry/GooglePhish.git"
     git clone --depth=1 $repo_link
+    
+    local status=$?
+    if [ $status != 0 ]; then
+        print_err "Clone failed! Exiting."
+        exit 1
+    else
+        print_success "Cloned successfully in ${HOME}"
+    fi
 
-    check_result "Failed to clone repository" "Repo Clone successfully"
-
-    cd "GooglePhish"
-    print_info "Setting up Project"
-    python -m pip install -r requirements.txt
-    check_result "Failed to install project requirements" "Project Requirements installed successfully"
-
-    python manage.py check
-    check_result "Failed to pass project tests" "All tests passed"
-
-    python manage.py makemigrations
-    python manage.py migrate
-    check_result "Failed to migrate DB" "DB migrated successfully"
-
-    print_info "Create User"
-    python manage.py createsuperuser
-    check_result "Failed to create admin user" "Admin user has been created"
-
-    python manage.py collectstatic
-    check_result "Failed to collect static files" "Static Files Collected successfully"
-
-    print_success "Project has been installed. you can run project using below command"
-    echo -e "${YELLOW}python manage.py runserver${NORMAL}"
-
-    print_info "Starting project..."
-    python manage.py runserver
-
-    return 0
+    # print info
+    print_info "Run termux-script.py file using:"
+    print_info "python termux-script.py"
 }
-# ======== end of functions ==============
+
+# ============ end of Functions ============
 
 ###########################################
-# Start script execution
-start_script
+# Script
+###########################################
+start
+
+# ============= end of Script =============
