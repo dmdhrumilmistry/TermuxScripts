@@ -11,7 +11,6 @@ FAINT="\e[2m"
 ITALIC="\e[3m"
 UNDERLINE="\e[4m"
 
-
 ############################################
 # ANSI Foregroud Colors
 BLACK="\e[30m"
@@ -22,7 +21,6 @@ BLUE="\e[34m"
 PURPLE="\e[35m"
 CYAN="\e[36m"
 LIGHT_GRAY="\e[37m"
-
 
 ############################################
 # ANSI Background Colors
@@ -36,14 +34,12 @@ BG_CYAN="\e[46m"
 BG_LIGHT_GRAY="\e[47m"
 # ========= end of ANSI variables =========
 
-
 ###########################################
 # Unicode variables
 # =========================================
 TICK="\u2713"
 CROSS="\u274c"
 # ======== end of Unicode variables =======
-
 
 ###########################################
 # Global variables
@@ -55,53 +51,50 @@ ARM_NGROK_LINK="https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.tgz"
 ARM64_NGROK_LINK="https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm64.tgz"
 # ======== end of Global variables ========
 
-
 ###########################################
 # Functions
 # =========================================
 
-banner(){
+banner() {
     echo -e "${BLUE}"
-    echo -e "███╗   ██╗ ██████╗ ██████╗  ██████╗ ██╗  ██╗"                          
-    echo -e "████╗  ██║██╔════╝ ██╔══██╗██╔═══██╗██║ ██╔╝"                         
-    echo -e "██╔██╗ ██║██║  ███╗██████╔╝██║   ██║█████╔╝"                           
-    echo -e "██║╚██╗██║██║   ██║██╔══██╗██║   ██║██╔═██╗"                           
-    echo -e "██║ ╚████║╚██████╔╝██║  ██║╚██████╔╝██║  ██╗"                          
-    echo -e "╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝"                          
-    echo -e "${NORMAL}${CYAN}"                                        
+    echo -e "███╗   ██╗ ██████╗ ██████╗  ██████╗ ██╗  ██╗"
+    echo -e "████╗  ██║██╔════╝ ██╔══██╗██╔═══██╗██║ ██╔╝"
+    echo -e "██╔██╗ ██║██║  ███╗██████╔╝██║   ██║█████╔╝"
+    echo -e "██║╚██╗██║██║   ██║██╔══██╗██║   ██║██╔═██╗"
+    echo -e "██║ ╚████║╚██████╔╝██║  ██║╚██████╔╝██║  ██╗"
+    echo -e "╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝"
+    echo -e "${NORMAL}${CYAN}"
     echo -e "╦┌┐┌┌─┐┌┬┐┌─┐┬  ┬  ┌─┐┬─┐"
     echo -e "║│││└─┐ │ ├─┤│  │  ├┤ ├┬┘"
-    echo -e "╩┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─"                           
+    echo -e "╩┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─"
     echo -e "${NORMAL}${GREEN}+----------------+${NORMAL}"
     echo -e "${GREEN}|${NORMAL} Written by     ${GREEN}|${NORMAL}"
     echo -e "${GREEN}|${NORMAL}${YELLOW} Dhrumil Mistry ${GREEN}|${NORMAL}"
     echo -e "${GREEN}+----------------+${NORMAL}"
-    echo -e ""                                                          
+    echo -e ""
 }
 
 ###########################################
 # prints info message
-print_info(){
+print_info() {
     local message=$1
     if [ "$message" != "" ]; then
         echo -e "${BOLD}${YELLOW}[*] ${message}${NORMAL}"
     fi
 }
 
-
 ###########################################
 # prints error message
-print_err(){
+print_err() {
     local message=$1
     if [ "$message" != "" ]; then
         echo -e "${BOLD}${RED}[${CROSS}] ${message}${NORMAL}"
     fi
 }
 
-
 ###########################################
 # prints successs message
-print_success(){
+print_success() {
     local message=$1
     if [ "$message" != "" ]; then
         echo -e "${BOLD}${GREEN}[${TICK}] ${message}${NORMAL}"
@@ -110,9 +103,9 @@ print_success(){
 
 ###########################################
 # to install requirements
-install_reqs(){
+install_reqs() {
     local packages=("wget")
-    for package in "${packages[@]}"; do 
+    for package in "${packages[@]}"; do
         print_info "Installing $package package."
         apt install $package -y
         local status=$?
@@ -127,11 +120,11 @@ install_reqs(){
 
 ###########################################
 # Downloads and setups ngrok on Termux
-setup_ngrok(){
+setup_ngrok() {
     if [[ -f "${PREFIX}/bin/ngrok" ]]; then
         print_err "Ngrok is already installed"
         exit 1
-    fi 
+    fi
 
     local tmpdir="${PREFIX}/tmp/"
     local ngrok_file="ngrok.tgz"
@@ -161,7 +154,6 @@ setup_ngrok(){
 }
 
 # ======== end of functions ==============
-
 
 ##############################################
 # Start Script
