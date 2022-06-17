@@ -90,8 +90,6 @@ ______________________________
   >> run GooglePhish.sh
   ```
 
-- To insta
-
 ## License
 
 [MIT License](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/LICENSE)

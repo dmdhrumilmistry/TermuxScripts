@@ -3,6 +3,7 @@
 
 from os import chdir, listdir, name, getcwd
 from os.path import isfile, isdir, join, dirname
+from matplotlib import cm
 from prettytable import PrettyTable
 from subprocess import call, check_output
 from sys import exit
@@ -136,7 +137,7 @@ def start():
 
                 case 'clear':
                     cmd = 'cls' if name == 'nt' else 'clear'
-                    call(cmd, shell=True)
+                    execute_cmd(cmd)
 
                 case 'exit':
                     exit(0)
@@ -172,7 +173,7 @@ def start():
 
                         if isfile(file_path) and ROOT_DIR in file_path:
                             print(f"[*] Starting {sh_file_name}")
-                            call(['bash', file_path], shell=True)
+                            execute_cmd(f"bash {file_path}")
                         else:
                             print("[!] Invalid File Path")
 
