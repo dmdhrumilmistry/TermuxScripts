@@ -1,7 +1,22 @@
 # TermuxScripts
 
+```bash
+===============================
+___  ___  __
+ |  |__  |__)  |\/| |  | \_/
+ |  |___ |  \  |  | \__/ / \
+
+ __   __   __     __  ___  __
+/__` /  ` |__) | |__)  |  /__`
+.__/ \__, |  \ | |     |  .__/
+______________________________
+Project by
+dmdhrumilmistry
+______________________________
+```
 
 ## Scripts
+
 - Installation Scripts
   |Script Name|Description|
   |:---------:|:----------|
@@ -12,25 +27,78 @@
   |[Ngrok](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/ngrok_installation.sh)|Installs ngrok on Termux|
   |[GooglePhish](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/GooglePhish.sh)|Installs Google Phishing Page Project on Termux|
   
+## Installation
+
+- Install **TermuxScripts** project
+
+  ```bash
+  bash -c "$(curl -fsSL https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/installer.sh?raw=True)"
+  ```
+
+- Provide `termux-scripts.py` permission for execution if missing
+
+  ```bash
+  chmod +x TermuxScripts/termux-scripts.py
+  ```
 
 ## Usage
-- replace [script_link] with desired script link and execute below command in termux
+
+- Start UI using
+
+    ```bash
+    python termux-scripts.py
+    ```
+
+    _OR_
+
+    ```bash
+    ./termux-scripts.py
+    ```
+
+- Use help menu for options
+
+    ```
+    >> help
+    +---------+----------------------------------------------+
+    | Command | Description                                  |
+    +---------+----------------------------------------------+
+    |   help  | prints commands along with description       |
+    |   exit  | exits TermuxScripts console                  |
+    |  clear  | clears console                               |
+    |   show  | print options in current directory           |
+    |  select | selects a directory, eg. select Installation |
+    |   back  | move one directory back                      |
+    |   run   | runs a script eg. run GooglePhish.sh         |
+    +---------+----------------------------------------------+
+    ```
+
+- To run `GooglePhish.sh` scripts from `Installation` scripts use:
+
   ```bash
-  curl -L -o "downloaded_script.sh" "[script_link]?raw=True" && bash downloaded_script.sh
+  >> show
+  +--------------+-----------------------+---------------+
+  |     Dir      |         Files         | Dirs          |
+  +--------------+-----------------------+---------------+
+  |      .       |      installer.sh     | .git          |
+  |              |                       | Installation  |
+  | Installation |     GooglePhish.sh    | Beef          |
+  |              |    cryptography.sh    | linux_distros |
+  |              | ngrok_installation.sh |               |
+  |              |    tor_webserver.sh   |               |
+  +--------------+-----------------------+---------------+
+  >> select Installation 
+  >> run GooglePhish.sh
   ```
-  OR
-  ```
-  bash -c "$(curl -fsSL [script_link]?raw=True)"
-  ```
-- Examples:
-  - To install `cryptography python package` use
-  ```bash
-  curl -L -o "downloaded_script.sh" "https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/cryptography.sh?raw=True" && bash downloaded_script.sh
-  ```
-- To install `Ngrok` use
-  ```bash
-  bash -c "$(curl -fsSL https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/Installation/ngrok_installation.sh?raw=True)"
-  ```
- 
+
+- To insta
+
 ## License
+
 [MIT License](https://github.com/dmdhrumilmistry/TermuxScripts/blob/main/LICENSE)
+
+## Contributions
+
+- Fork this project
+- Update project
+- Create Pull Request
+- PR will be merged after reviewing the commits
