@@ -3,7 +3,6 @@
 
 from os import chdir, listdir, name, getcwd
 from os.path import isfile, isdir, join, dirname
-from matplotlib import cm
 from prettytable import PrettyTable
 from subprocess import call, check_output
 from sys import exit
