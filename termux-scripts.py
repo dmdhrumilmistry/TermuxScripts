@@ -1,12 +1,15 @@
 #!/data/data/com.termux/files/usr/bin/python
 
 
-from os import listdir
+from os import chdir, listdir, name, getcwd
 from os.path import isfile, isdir, join, dirname
 from prettytable import PrettyTable
 from subprocess import call, check_output
 from sys import exit
 from textwrap import dedent
+
+# global variables
+ROOT_DIR = dirname(__file__)
 
 
 def banner():
@@ -52,6 +55,11 @@ def map_files(dir_path: str) -> dict:
     dirs = get_dirs(dir_path)
     dirs = [dir for dir in dirs if '.' not in dir]
 
+    # add current directory to dirs list
+    # it'll be used to print curr dir scripts
+    # in get_table function
+    dirs.insert(0, '.')
+
     # create and return map
     map = {}
     for dir in dirs:
@@ -66,7 +74,6 @@ def map_files(dir_path: str) -> dict:
 def get_table(dir_path: str):
     # map data
     mapped_data = map_files(dir_path)
-    print(mapped_data)
 
     # create and return table
     table = PrettyTable(['Dir', 'Files', 'Dirs'])
@@ -90,8 +97,27 @@ def get_table(dir_path: str):
 def print_table(dir_name: str) -> None:
     '''prints table for the specified directory'''
     # get and print table
-    table = get_table(dir_name)
-    print(table)
+    print(get_table(dir_name))
+
+
+def print_help():
+    # create help menu table and align cols
+    help = PrettyTable(['Command', 'Description'])
+    help.align['Command'] = 'c'
+    help.align['Description'] = 'l'
+
+    # add commands
+    help.add_row(['help', 'prints commands along with description'])
+    help.add_row(['exit', 'exits TermuxScripts console'])
+    help.add_row(['clear', 'clears console'])
+    help.add_row(['show', 'print options in current directory'])
+    help.add_row(['select', 'selects a directory, eg. select Installation'])
+    help.add_row(['back', 'move one directory back'])
+    help.add_row(['run', 'runs a script eg. run GooglePhish.sh'])
+    # help.add_row(['',''])
+
+    # print help menu
+    print(help)
 
 
 def start():
@@ -100,14 +126,60 @@ def start():
         # print banner
         banner()
 
-        print_table(dirname(__file__))
-
         while True:
-            command = input('>> ').strip().lower()
-            # TODO: create and execute commands
+            command = input('>> ').strip().split()
+            cmd_len = len(command)
 
-    except EOFError or KeyboardInterrupt:
-        print("[!] User Interrupted! Exiting.")
+            match command[0].lower():
+                case 'help':
+                    print_help()
+
+                case 'clear':
+                    cmd = 'cls' if name == 'nt' else 'clear'
+                    call(cmd, shell=True)
+
+                case 'exit':
+                    exit(0)
+
+                case 'show':
+                    print_table(getcwd())
+
+                case 'back':
+                    if getcwd() != ROOT_DIR:
+                        chdir('..')
+                    else:
+                        print("[!] Cannot move out of the Project folder")
+
+                case 'select':
+                    if cmd_len >= 2 :
+                        dirname = command[1]
+                        new_dir = join(getcwd(), dirname)
+
+                        # change directory if new_dir is valid
+                        if isdir(new_dir) and ROOT_DIR in new_dir:
+                            chdir(new_dir)
+                        else:
+                            print("[!] Directory does not exists/Cannot Move out of Project Folder")
+                    else:
+                        print(
+                            "[!] Directory name is required. example: select directory_name")
+                
+                case 'run':
+                    if cmd_len >= 2:
+                        sh_file_name = command[1]
+                        file_path = join(getcwd(), sh_file_name)
+
+                        if isfile(file_path) and ROOT_DIR in file_path:
+                            print(f"[*] Starting {sh_file_name}")
+                            call(['bash', file_path], shell=True)
+                        else:
+                            print("[!] Invalid File Path")
+
+                case _:
+                    print("[-] Invalid Command, use help for to print commands.")
+
+    except KeyboardInterrupt or EOFError:
+        print("\n[!] Exiting.")
         exit()
 
     except Exception as e:
